@@ -41,7 +41,7 @@ class DesisionTree():
 
     def ex1(self, min_sample_leaf=1):
 
-        clf = tr.DecisionTreeClassifier(min_samples_leaf=min_sample_leaf)
+        clf = tr.DecisionTreeClassifier(criterion ='entropy',min_samples_leaf=min_sample_leaf)
         clf = clf.fit(self.x_train, self.y_train)
 
         y_pred = clf.predict(self.x_test)

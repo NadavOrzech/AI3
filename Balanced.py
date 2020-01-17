@@ -60,7 +60,7 @@ class DesisionTree():
         # print(x_train_new)
         # print(y_train_new)
         # Building a decision tree using the balanced training set
-        clf = tr.DecisionTreeClassifier()
+        clf = tr.DecisionTreeClassifier(criterion ='entropy')
         clf = clf.fit(x_train_new, y_train_new)
 
         y_pred = clf.predict(self.x_test)
