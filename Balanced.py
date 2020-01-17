@@ -64,9 +64,13 @@ class DesisionTree():
         clf = clf.fit(x_train_new, y_train_new)
 
         y_pred = clf.predict(self.x_test)
-        mat = confusion_matrix(self.y_test, y_pred)
-        print(mat)
+        # mat = confusion_matrix(self.y_test, y_pred)
+        self.printMatrix(self.y_test, y_pred)
 
+    def printMatrix(self, y_test, y_pred):
+        tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
+        print("[[{} {}]".format(tp, fp))
+        print("[[{} {}]".format(fn, tn))
 
 if __name__ == '__main__':
     tree = DesisionTree()

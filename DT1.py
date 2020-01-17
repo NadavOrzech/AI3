@@ -46,6 +46,7 @@ class DesisionTree():
 
         y_pred = clf.predict(self.x_test)
         mat = confusion_matrix(self.y_test, y_pred)
+        self.printMatrix(self.y_test, y_pred)
         return mat, clf
 
     def calculate_accuracy(self, mat, len):
@@ -53,6 +54,11 @@ class DesisionTree():
 
     def split_rule(self, lamda):
         pass
+
+    def printMatrix(self, y_test, y_pred):
+        tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
+        print("[[{} {}]".format(tp, fp))
+        print("[[{} {}]".format(fn, tn))
 
 
     def ex3(self):
@@ -92,6 +98,7 @@ class DesisionTree():
 
 if __name__ == '__main__':
     tree = DesisionTree()
+
     # print(tree.ex3())
     # tree.ex4()
     tree.ex7()
