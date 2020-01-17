@@ -39,11 +39,25 @@ class DesisionTree():
             y.append(row[-1])
         return x, y
 
+    def printMatrix(self, y_test, y_pred):
+        tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
+        print("[[{} {}]".format(tp, fp))
+        print("[[{} {}]".format(fn, tn))
+
     def ex1(self, min_sample_leaf=1):
 
-        clf = tr.DecisionTreeClassifier(min_sample_leaf)
+        clf = tr.DecisionTreeClassifier(criterion ='entropy', min_samples_leaf=min_sample_leaf, class_weight={"1": 4, "0": 1})
         clf = clf.fit(self.x_train, self.y_train)
 
         y_pred = clf.predict(self.x_test)
         mat = confusion_matrix(self.y_test, y_pred)
+        self.printMatrix(self.y_test, y_pred)
         return mat, clf
+
+    def ex11(self):
+        tree_mat, tmp = self.ex1(9)
+
+if __name__ == '__main__':
+    tree = DesisionTree()
+    tree.ex11()
+
