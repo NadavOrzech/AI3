@@ -3,18 +3,9 @@ import numpy as np
 from sklearn.metrics import confusion_matrix
 from operator import itemgetter
 from math import sqrt
-from itertools import chain, combinations
-
-def powerset(iterable):
-    """
-    powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)
-    """
-    xs = list(iterable)
-    # note we return an iterator rather than a list
-    return chain.from_iterable(combinations(xs,n) for n in range(len(xs)+1))
 
 
-class KNN_OPT():
+class SFS:
 
     def __init__(self):
         self.train_set = []
@@ -37,33 +28,37 @@ class KNN_OPT():
         self.x_train = []
         self.x_test = []
         self.feature_len = 0
-        self.orig_feature_len = len(self.train_set[0])-1
+        self.orig_feature_len = len(self.train_set[0]) - 1
         features = []
         for i in range(self.orig_feature_len):
             features.append(i)
-        iterator = powerset(features)
-        arr = []
-        print( features)
-        for subset in iterator:
-            self.subset = subset
-            arr.append((self.KNN9(), subset))
-        arr = sorted(arr, key=itemgetter(0))
-        acc, sub = arr[len(arr) - 1]
-        print(sub)
+        best_features = self.find_best_features(features)
+        print(best_features)
 
+    def find_best_features(self, features):
+        new_acc = 0
+        old_acc = 0
+        curr_features = []
+        features_left = features
+        while features_left:
+            acc_arr = []
+            for feature in features_left:
+                tmp = curr_features + [feature]
+                acc_arr.append((self.KNN9(tmp), feature))
+            acc_arr = sorted(acc_arr,  key=itemgetter(0))
+            new_acc, feature = acc_arr[len(acc_arr) - 1]
+            if new_acc >= old_acc:
+                old_acc = new_acc
+                curr_features.append(feature)
+                features_left.remove(feature)
+            else:
+                break
+        return curr_features
 
-    def set_data(self):
-        self.x_train, self.y_train = self.extract_certain_cols(self.train_set,self.subset)
-        self.x_test, self.y_test = self.extract_certain_cols(self.test_set, self.subset)
+    def set_data(self, subset):
+        self.x_train, self.y_train = self.extract_certain_cols(self.train_set, subset)
+        self.x_test, self.y_test = self.extract_certain_cols(self.test_set, subset)
         self.feature_len = len(self.x_train[0])
-
-    # def extract_cols(self, array):
-    #     x = []
-    #     y = []
-    #     for row in array:
-    #         x.append(row[0:len(row) - 1])
-    #         y.append(row[-1])
-    #     return x, y
 
     def extract_certain_cols(self, array, cols):
         x = []
@@ -120,8 +115,8 @@ class KNN_OPT():
     def calculate_accuracy(self, mat, len):
         return (mat[0][0] + mat[1][1]) / len
 
-    def KNN9(self):
-        self.set_data()
+    def KNN9(self, subset):
+        self.set_data(subset)
         self.normalize()
         y_pred = []
         for sample in self.x_test:
@@ -130,6 +125,5 @@ class KNN_OPT():
         mat = confusion_matrix(self.y_test, y_pred)
         return self.calculate_accuracy(mat, self.test_set_len)
 
-
 if __name__ == '__main__':
-    o = KNN_OPT()
+    o = SFS()

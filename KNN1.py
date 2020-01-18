@@ -1,9 +1,7 @@
 import csv
 import numpy as np
-# from sklearn import tree as tr
 from sklearn.metrics import confusion_matrix
 from operator import itemgetter
-# import matplotlib.pyplot as plt
 from math import sqrt
 
 
@@ -82,6 +80,9 @@ class KNN():
         else:
             return '0'
 
+    def calculate_accuracy(self, mat, len):
+        return (mat[0][0] + mat[1][1]) / len
+
     def KNN9(self):
         self.normalize()
         y_pred = []
@@ -90,12 +91,7 @@ class KNN():
 
         mat = confusion_matrix( self.y_test, y_pred)
         self.printMatrix(self.y_test, y_pred)
-        sum0 = sum1 = 0
-        for i in range(len(y_pred)):
-            if y_pred[i] == '0':
-                sum0 += 1
-            else:
-                sum1 += 1
+        print(self.calculate_accuracy(mat, self.test_set_len))
 
 
 if __name__ == '__main__':
