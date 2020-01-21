@@ -2,12 +2,13 @@ import csv
 import numpy as np
 from sklearn import tree as tr
 from sklearn.metrics import confusion_matrix
-import matplotlib.pyplot as plt
-
 
 class DesisionTree():
 
     def __init__(self):
+        '''
+            Initiate the train and test data sets using the given .csv files
+        '''
         self.train_set = []
         self.test_set = []
         self.x_train = self.y_train = []
@@ -40,13 +41,17 @@ class DesisionTree():
         return x, y
 
     def printMatrix(self, y_test, y_pred):
+        # This function print the Confusion Matrix in the correct f1 form
         tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
         print("[[{} {}]".format(tp, fp))
-        print("[[{} {}]".format(fn, tn))
+        print("[{} {}]]".format(fn, tn))
 
     def ex1(self, min_sample_leaf=1):
-
-        clf = tr.DecisionTreeClassifier(criterion ='entropy', min_samples_leaf=min_sample_leaf, class_weight={"1": 4, "0": 1})
+        # Creates the Decision Tree using the train and test date sets,
+        # using the weighted entropy function.
+        # Prints the confusion matrix, and returns the matrix and the decision tree itself
+        clf = tr.DecisionTreeClassifier(criterion ='entropy', min_samples_leaf=min_sample_leaf,
+                                        class_weight={"1": 4, "0": 1})
         clf = clf.fit(self.x_train, self.y_train)
 
         y_pred = clf.predict(self.x_test)
@@ -56,6 +61,7 @@ class DesisionTree():
 
     def ex11(self):
         tree_mat, tmp = self.ex1(9)
+        return tree_mat, tmp
 
 if __name__ == '__main__':
     tree = DesisionTree()

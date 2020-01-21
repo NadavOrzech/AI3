@@ -5,9 +5,12 @@ from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt
 
 
-class DesisionTree():
+class DecisionTree():
 
     def __init__(self):
+        '''
+            Initiate the train and test data sets using the given .csv files
+        '''
         self.train_set = []
         self.test_set = []
         self.x_train = self.y_train = []
@@ -39,8 +42,15 @@ class DesisionTree():
             y.append(row[-1])
         return x, y
 
-    def ex1(self, min_sample_leaf=1):
+    def printMatrix(self, y_test, y_pred):
+        # This function print the Confusion Matrix in the correct f1 form
+        tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
+        print("[[{} {}]".format(tp, fp))
+        print("[{} {}]]".format(fn, tn))
 
+    def ex1(self, min_sample_leaf=1):
+        # Creates the Decision Tree using the train and test date sets.
+        # Prints the confusion matrix, and returns the matrix and the decision tree itself
         clf = tr.DecisionTreeClassifier(criterion ='entropy',min_samples_leaf=min_sample_leaf)
         clf = clf.fit(self.x_train, self.y_train)
 
@@ -50,18 +60,14 @@ class DesisionTree():
         return mat, clf
 
     def calculate_accuracy(self, mat, len):
+        # Calculates the accuracy factor of the algorithm using the confusion matrix
         return (mat[0][0] + mat[1][1])/len
 
-    def split_rule(self, lamda):
-        pass
-
-    def printMatrix(self, y_test, y_pred):
-        tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
-        print("[[{} {}]".format(tp, fp))
-        print("[[{} {}]".format(fn, tn))
-
-
     def ex3(self):
+        # Calculates decision trees with min samples per leaf factor of {3,9,27}
+        # Prints graphs of accuracy by min samples factor
+        # Returns the accuracy of all 3 trees
+
         tree3_mat, tmp = self.ex1(3)
         tree9_mat, tmp = self.ex1(9)
         tree27_mat, tmp = self.ex1(27)
@@ -80,6 +86,9 @@ class DesisionTree():
         return tree3_accu, tree9_accu, tree27_accu
 
     def ex4(self):
+        # This function print the tree graph of decision tree with min sample per leaf
+        # factor of 27
+
         tree27_mat, tree27 = self.ex1(27)
         graph=plt.figure(figsize=(14, 7))
         graph = tr.plot_tree(tree27, feature_names=['Pregnancies',	'Glucose',	'BloodPressure',
@@ -88,6 +97,9 @@ class DesisionTree():
         plt.show(graph)
 
     def ex7(self):
+        # This function calculates and prints the weighted error factor of standard decision
+        # tree and of tree27 (min samples per leaf = 27)
+
         tree1_mat, tmp = self.ex1()
         tree27_mat, tmp = self.ex1(27)
 
@@ -97,11 +109,8 @@ class DesisionTree():
 
 
 if __name__ == '__main__':
-    tree = DesisionTree()
-
-    # print(tree.ex3())
-    # tree.ex4()
-    tree.ex7()
+    tree = DecisionTree()
+    tree.ex1()
 
 
 

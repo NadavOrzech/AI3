@@ -8,6 +8,9 @@ import matplotlib.pyplot as plt
 class DesisionTree():
 
     def __init__(self):
+        '''
+            Initiate the train and test data sets using the given .csv files
+        '''
         self.train_set = []
         self.test_set = []
         self.x_train = self.y_train = []
@@ -39,6 +42,12 @@ class DesisionTree():
             y.append(row[-1])
         return x, y
 
+    def printMatrix(self, y_test, y_pred):
+        # This function print the Confusion Matrix in the correct f1 form
+        tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
+        print("[[{} {}]".format(tp, fp))
+        print("[{} {}]]".format(fn, tn))
+
     def ex8(self):
         # balancing the training set to hold equal number
         # of true samples and negative samples
@@ -57,20 +66,14 @@ class DesisionTree():
                 x_train_new.append(self.x_train[index])
                 y_train_new.append("0")
                 T -= 1
-        # print(x_train_new)
-        # print(y_train_new)
+
         # Building a decision tree using the balanced training set
         clf = tr.DecisionTreeClassifier(criterion ='entropy')
         clf = clf.fit(x_train_new, y_train_new)
 
         y_pred = clf.predict(self.x_test)
-        # mat = confusion_matrix(self.y_test, y_pred)
         self.printMatrix(self.y_test, y_pred)
 
-    def printMatrix(self, y_test, y_pred):
-        tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
-        print("[[{} {}]".format(tp, fp))
-        print("[[{} {}]".format(fn, tn))
 
 if __name__ == '__main__':
     tree = DesisionTree()

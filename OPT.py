@@ -17,6 +17,9 @@ def powerset(iterable):
 class KNN_OPT():
 
     def __init__(self):
+        '''
+            Initiate the train and test data sets using the given .csv files
+        '''
         self.train_set = []
         self.test_set = []
         self.x_train = self.y_train = []
@@ -38,32 +41,7 @@ class KNN_OPT():
         self.x_test = []
         self.feature_len = 0
         self.orig_feature_len = len(self.train_set[0])-1
-        features = []
-        for i in range(self.orig_feature_len):
-            features.append(i)
-        iterator = powerset(features)
-        arr = []
-        print( features)
-        for subset in iterator:
-            self.subset = subset
-            arr.append((self.KNN9(), subset))
-        arr = sorted(arr, key=itemgetter(0))
-        acc, sub = arr[len(arr) - 1]
-        print(sub)
-
-
-    def set_data(self):
-        self.x_train, self.y_train = self.extract_certain_cols(self.train_set,self.subset)
-        self.x_test, self.y_test = self.extract_certain_cols(self.test_set, self.subset)
-        self.feature_len = len(self.x_train[0])
-
-    # def extract_cols(self, array):
-    #     x = []
-    #     y = []
-    #     for row in array:
-    #         x.append(row[0:len(row) - 1])
-    #         y.append(row[-1])
-    #     return x, y
+        self.subset = []
 
     def extract_certain_cols(self, array, cols):
         x = []
@@ -74,15 +52,13 @@ class KNN_OPT():
                 tmp.append(row[i])
             x.append(tmp)
             y.append(row[-1])
-
         return x,y
 
-    def printMatrix(self, y_test, y_pred):
-        tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
-        print("[[{} {}]".format(tp, fp))
-        print("[[{} {}]".format(fn, tn))
-
     def normalize(self):
+        # This function normalizes the train and test data sets, using max and min value of
+        # every feature, by the function of feature[i] = feature[i] - min [i]/
+        #                                                    max[i] - min[i]
+
         x_min = [np.inf]*self.feature_len
         x_max = [-np.inf]*self.feature_len
 
@@ -98,12 +74,15 @@ class KNN_OPT():
                 self.x_test[i][j] = (float(self.x_test[i][j]) - float(x_min[j])) / (float(x_max[j])-float(x_min[j]))
 
     def euclidean_distance(self, vec1, vec2):
+        # This function return the euclidean distance of two given features vectors
         sum = 0
         for i in range(self.feature_len):
             sum += pow((float(vec1[i]) - float(vec2[i])), 2)
         return sqrt(sum)
 
     def find_classifier(self, sample):
+        # This function returns classification for a given sample using the given train
+        # data set and 9NN algorithm
         sort_arr = []
         for i in range(self.train_set_len):
             sort_arr.append((self.euclidean_distance(sample, self.x_train[i]), i))
@@ -118,9 +97,11 @@ class KNN_OPT():
             return '0'
 
     def calculate_accuracy(self, mat, len):
+        # Calculates the accuracy factor of the algorithm using the confusion matrix
         return (mat[0][0] + mat[1][1]) / len
 
     def KNN9(self):
+        # Calculates and returns the confusion matrix of 9NN prediction set of certain cols
         self.set_data()
         self.normalize()
         y_pred = []
@@ -130,6 +111,29 @@ class KNN_OPT():
         mat = confusion_matrix(self.y_test, y_pred)
         return self.calculate_accuracy(mat, self.test_set_len)
 
+    def set_data(self):
+        # Fitting the train and test sets by changing features set to chosen subset form
+        self.x_train, self.y_train = self.extract_certain_cols(self.train_set,self.subset)
+        self.x_test, self.y_test = self.extract_certain_cols(self.test_set, self.subset)
+        self.feature_len = len(self.x_train[0])
+
+    def calculate_opt_sub(self):
+        # Calculates the accuracy of 9NN algorithm on every possible subset of the
+        # features set and prints the subset matching the best result
+        features = []
+        for i in range(self.orig_feature_len):
+            features.append(i)
+        iterator = powerset(features)
+        arr = []
+
+        for subset in iterator:
+            self.subset = subset
+            arr.append((self.KNN9(), subset))
+        arr = sorted(arr, key=itemgetter(0))
+        acc, sub = arr[len(arr) - 1]
+        print(list(sub))
+
 
 if __name__ == '__main__':
     o = KNN_OPT()
+    o.calculate_opt_sub()

@@ -8,6 +8,10 @@ from math import sqrt
 class SFS:
 
     def __init__(self):
+        '''
+            Initiate the train and test data sets using the given .csv files
+            and prints the best features set
+        '''
         self.train_set = []
         self.test_set = []
         self.x_train = self.y_train = []
@@ -33,9 +37,11 @@ class SFS:
         for i in range(self.orig_feature_len):
             features.append(i)
         best_features = self.find_best_features(features)
+        best_features.sort()
         print(best_features)
 
     def find_best_features(self, features):
+        # Finds the best features set
         new_acc = 0
         old_acc = 0
         curr_features = []
@@ -72,12 +78,10 @@ class SFS:
 
         return x,y
 
-    def printMatrix(self, y_test, y_pred):
-        tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
-        print("[[{} {}]".format(tp, fp))
-        print("[[{} {}]".format(fn, tn))
-
     def normalize(self):
+        # This function normalizes the train and test data sets, using max and min value of
+        # every feature, by the function of feature[i] = feature[i] - min [i]/
+        #                                                    max[i] - min[i]
         x_min = [np.inf]*self.feature_len
         x_max = [-np.inf]*self.feature_len
 
@@ -93,12 +97,15 @@ class SFS:
                 self.x_test[i][j] = (float(self.x_test[i][j]) - float(x_min[j])) / (float(x_max[j])-float(x_min[j]))
 
     def euclidean_distance(self, vec1, vec2):
+        # This function return the euclidean distance of two given features vectors
         sum = 0
         for i in range(self.feature_len):
             sum += pow((float(vec1[i]) - float(vec2[i])), 2)
         return sqrt(sum)
 
     def find_classifier(self, sample):
+        # This function returns classification for a given sample using the given train
+        # data set and 9NN algorithm
         sort_arr = []
         for i in range(self.train_set_len):
             sort_arr.append((self.euclidean_distance(sample, self.x_train[i]), i))
@@ -113,9 +120,11 @@ class SFS:
             return '0'
 
     def calculate_accuracy(self, mat, len):
+        # Calculates the accuracy factor of the algorithm using the confusion matrix
         return (mat[0][0] + mat[1][1]) / len
 
     def KNN9(self, subset):
+        # Calculates and prints the confusion matrix of 9NN prediction set
         self.set_data(subset)
         self.normalize()
         y_pred = []

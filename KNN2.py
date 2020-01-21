@@ -8,6 +8,9 @@ from math import sqrt
 class KNN():
 
     def __init__(self):
+        '''
+            Initiate the train and test data sets using the given .csv files
+        '''
         self.train_set = []
         self.test_set = []
         self.x_train = self.y_train = []
@@ -23,8 +26,6 @@ class KNN():
             next(test_file, None)
             for row in test_file:
                 self.test_set.append(row)
-        # self.train_set = np.array(self.train_set)
-        # self.test_set = np.array(self.test_set)
 
         self.x_train, self.y_train = self.extract_cols(self.train_set)
         self.x_test, self.y_test = self.extract_cols(self.test_set)
@@ -41,11 +42,15 @@ class KNN():
         return x, y
 
     def printMatrix(self, y_test, y_pred):
+        # This function print the Confusion Matrix in the correct f1 form
         tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
         print("[[{} {}]".format(tp, fp))
-        print("[[{} {}]".format(fn, tn))
+        print("[{} {}]]".format(fn, tn))
 
     def normalize(self):
+        # This function normalizes the train and test data sets, using max and min value of
+        # every feature, by the function of feature[i] = feature[i] - min [i]/
+        #                                                    max[i] - min[i]
         x_min = [np.inf]*self.feature_len
         x_max = [-np.inf]*self.feature_len
 
@@ -61,12 +66,15 @@ class KNN():
                 self.x_test[i][j] = (float(self.x_test[i][j]) - float(x_min[j])) / (float(x_max[j])-float(x_min[j]))
 
     def euclidean_distance(self, vec1, vec2):
+        # This function return the euclidean distance of two given features vectors
         sum = 0
         for i in range(self.feature_len):
             sum += pow((float(vec1[i]) - float(vec2[i])), 2)
         return sqrt(sum)
 
     def find_classifier(self, sample, x):
+        # This function returns classification for a given sample using the given train
+        # data set and weighted KNN algorithm, that '1' weights 4 times of '0'
         sort_arr = []
         for i in range(self.train_set_len):
             sort_arr.append((self.euclidean_distance(sample, self.x_train[i]), i))
@@ -85,9 +93,11 @@ class KNN():
             return '0'
 
     def calculate_accuracy(self, mat, len):
+        # Calculates the accuracy factor of the algorithm using the confusion matrix
         return (mat[0][0] + mat[1][1]) / len
 
     def KNN_X(self, x):
+        # Prints the confusion matrix of KNN algorithm using the weighted data set
         self.normalize()
         y_pred = []
         for sample in self.x_test:
@@ -95,16 +105,14 @@ class KNN():
 
         mat = confusion_matrix( self.y_test, y_pred)
         self.printMatrix(self.y_test, y_pred)
-        print(self.error_w(mat))
 
     def error_w(self, mat):
+        # Calculates the weighted error factor of the algorithm using the confusion matrix
         return (4*mat[1][0] + mat[0][1])
 
 
 if __name__ == '__main__':
     o = KNN()
-    o.KNN_X(1)
-    o.KNN_X(3)
     o.KNN_X(9)
-    o.KNN_X(27)
+
 
